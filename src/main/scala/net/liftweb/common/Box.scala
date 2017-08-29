@@ -24,26 +24,6 @@ import scala.reflect.Manifest
 import java.util.{Iterator => JavaIterator, ArrayList => JavaArrayList}
 
 /**
-  * A bridge to make using Lift `[[Box]]` from Java easier.
-  *
-  * In particular, provides access to the `Box` companion object so that
-  * functions like `[[Box$.legacyNullTest legacyNullTest]]` can be used easily
-  * from Java, as well as access to the `[[Empty]]` singleton so that empty
-  * values can be created easily from Java.
-  */
-class BoxJBridge {
-  /**
-    * Get the Box companion object
-    */
-  def box: BoxTrait = Box
-
-  /**
-    * Get the `[[Empty]]` singleton.
-    */
-  def empty: EmptyBox = Empty
-}
-
-/**
   * The Box companion object provides methods to create a Box from:
   *  - an `[[scala.Option Option]]`
   *  - a `[[scala.collection.immutable.List List]]`
