@@ -2,3 +2,5 @@ Opinionated fork of lift's Box (https://github.com/lift/framework/blob/master/co
 * deprecations removed
 * get's are allowed
 * removed some Java-specific stuff (we are a Scala and Scala.js only shop)
+
+Originally based off of of lift framework 3.1.0.
