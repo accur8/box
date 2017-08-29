@@ -1057,45 +1057,4 @@ trait Boxable[T] {
   def asBox: Box[T]
 }
 
-/**
-  * Sometimes it's convenient to access either a `[[Box]][T]` or a `T`.  If you
-  * specify `BoxOrRaw[T]`, either a `T` or a `Box[T]` can be passed and the
-  * "right thing" will happen, including `null`s being treated as `Empty`.
-  */
-sealed trait BoxOrRaw[T] {
-  def box: Box[T]
-}
-
-/**
-  * Companion object with implicit conversions to allow `BoxOrRaw[T]` to
-  * masquerade as the appropriate types.
-  */
-object BoxOrRaw {
-  implicit def rawToBoxOrRaw[T, Q <: T](r: Q): BoxOrRaw[T] =
-    RawBoxOrRaw(r: T)
-
-  implicit def boxToBoxOrRaw[T, Q <% T](r: Box[Q]): BoxOrRaw[T] = {
-    BoxedBoxOrRaw(r.map(v => v: T))
-  }
-
-  implicit def optionToBoxOrRaw[T, Q <% T](r: Option[Q]): BoxOrRaw[T] = {
-    BoxedBoxOrRaw(r.map(v => v: T))
-  }
-
-  implicit def borToBox[T](in: BoxOrRaw[T]): Box[T] = in.box
-}
-
-/**
-  * The `[[BoxOrRaw]]` that represents a boxed value.
-  */
-final case class BoxedBoxOrRaw[T](box: Box[T]) extends BoxOrRaw[T]
-
-/**
-  * The `[[BoxOrRaw]]` that represents a raw value.
-  */
-final case class RawBoxOrRaw[T](raw: T) extends BoxOrRaw[T] {
-  def box: Box[T] =
-    if (raw.asInstanceOf[Object] ne null) Full(raw) else Empty
-}
-
 // vim: set ts=2 sw=2 et:
