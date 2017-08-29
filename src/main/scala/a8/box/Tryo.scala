@@ -1,4 +1,4 @@
-package net.liftweb.common
+package a8.box
 
 trait Tryo {
 

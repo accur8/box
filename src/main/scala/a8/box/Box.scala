@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package net.liftweb
-package common
+package a8.box
 
 import scala.language.implicitConversions
 import scala.language.existentials
