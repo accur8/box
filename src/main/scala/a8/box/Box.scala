@@ -20,7 +20,6 @@ import scala.language.implicitConversions
 import scala.language.existentials
 import scala.reflect.Manifest
 
-import java.util.{Iterator => JavaIterator, ArrayList => JavaArrayList}
 
 /**
   * The Box companion object provides methods to create a Box from:
@@ -97,9 +96,6 @@ sealed trait BoxTrait {
     java.lang.Integer.TYPE -> classOf[java.lang.Integer],
     java.lang.Long.TYPE -> classOf[java.lang.Long],
     java.lang.Short.TYPE -> classOf[java.lang.Short])
-
-  @deprecated("Use the correctly-spelled primitiveMap instead.","3.0")
-  val primativeMap = primitiveMap
 
   /**
     * Create a `Box` from the specified `Option`.
@@ -256,14 +252,6 @@ sealed trait BoxTrait {
 }
 
 /**
-  * Used as a return type for certain methods that should not be called. One
-  * example is the `get` method on a Lift `Box`. It exists to prevent client
-  * code from using `.get` as an easy way to open a `Box`, so it needs a return
-  * type that will match no valid client return types.
-  */
-final class DoNotCallThisMethod
-
-/**
   * The `Box` class is a container which is able to declare if it is `Full`
   * (containing a single non-null value) or `[[EmptyBox]]`. An `EmptyBox`,
   * or empty, can be the `[[Empty]]` singleton, `[[Failure]]` or
@@ -400,14 +388,13 @@ sealed abstract class Box[+A] extends Product with Serializable{
   def openOrThrowException(justification: => String): A
 
   /**
-    * Exists to avoid the implicit conversion from `Box` to `Option`. Opening a
-    * `Box` unsafely should be done using `openOrThrowException`.
+    * The only time when you should be using this method is if the value is
+    * guaranteed to be available based on a guard outside of the method.
     *
-    * This method '''always''' throws an exception.
+    * @return The contents of the `Box` if it is `Full`.
+    * @throws NullPointerException If you attempt to call it on an `EmptyBox`.
     */
-  final def get: DoNotCallThisMethod = {
-    throw new Exception("Attempted to open a Box incorrectly. Please use openOrThrowException.")
-  }
+  final def get: A = openOrThrowException("")
 
   /**
     * Return the value contained in this `Box` if it is full; otherwise return
@@ -539,15 +526,6 @@ sealed abstract class Box[+A] extends Product with Serializable{
     * contained in this `Box`, if any.
     */
   def elements: Iterator[A] = Iterator.empty
-
-  /**
-    * Get a `java.util.Iterator` from the Box.
-    */
-  def javaIterator[B >: A]: JavaIterator[B] = {
-    val ar = new JavaArrayList[B]()
-    foreach(v => ar.add(v))
-    ar.iterator()
-  }
 
   /**
     * Returns an `[[scala.collection.Iterator Iterator]]` over the value
